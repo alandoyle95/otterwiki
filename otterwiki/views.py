@@ -2,6 +2,8 @@
 
 import os
 
+from urllib.parse import urlparse, unquote
+
 from flask import (
     request,
     send_from_directory,
@@ -156,11 +158,16 @@ def pageindex():
 
 @app.route("/-/create", methods=["POST", "GET"])
 def create():
+    # Windows/Test/This%20Is%20A%20Test
+    tns_currentPage =  "/".join(sanitize_pagename(unquote(urlparse(request.referrer).path[1:])).split('/')[:-1])
     pagename = request.form.get("pagename")
     pagename_sanitized = sanitize_pagename(pagename)
     if pagename is None:
         # This is the default create page view
-        return render_template("create.html", title="Create Page")
+        if tns_currentPage is None:
+            return render_template("create.html", title="Create Page")
+        else:
+            return render_template("create.html", title="Create Page", pagename=tns_currentPage)
     elif pagename != pagename_sanitized:
         if pagename is not None and pagename != pagename_sanitized:
             toast("Please check the pagename ...", "warning")
