@@ -159,7 +159,7 @@ def pageindex():
 @app.route("/-/create", methods=["POST", "GET"])
 def create():
     # Windows/Test/This%20Is%20A%20Test
-    tns_currentPage =  "/".join(sanitize_pagename(unquote(urlparse(request.referrer).path[1:])).split('/')[:-1])
+    tns_currentPage =  sanitize_pagename(unquote(urlparse(request.referrer).path[1:]))
     pagename = request.form.get("pagename")
     pagename_sanitized = sanitize_pagename(pagename)
     if pagename is None:
